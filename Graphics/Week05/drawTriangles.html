@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>20175260 최영빈 - Drawing Triangles</title>
+    
+        <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vColor;
+        varying vec4 fColor;
+
+        void main() {
+            fColor = vColor;
+            gl_Position = vPosition;
+        }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+        
+        void main() {
+            gl_FragColor = fColor; 
+        }
+        </script>
+    
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="drawTriangles.js"></script>
+    </head>
+    <body>
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+        <div>
+            Line Color: <select id = "lineColor">
+                <option value ="red">Red</option>
+                <option value="green">Green</option>
+                <option value="blue">Blue</option>
+                <option value="yellow">Yellow</option>
+                <option value="cyan">Cyan</option>
+                <option value="magenta">Magenta</option>
+                <option value="gray">Gray</option>
+                <option value="black">Black</option>
+            </select>
+        </div>
+    </body>
+</html>

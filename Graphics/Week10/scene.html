@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>20175260 최영빈 - Lighting</title>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vNormal;
+        attribute vec4 vColor;
+        uniform mat4 modelMatrix, viewMatrix;
+        uniform mat4 projectionMatrix;
+        varying vec4 fColor;
+
+        uniform vec3 eyePos, kAtten, spotDir;
+        uniform vec4 lightSrc, ambientProduct, diffuseProduct, specularProduct;
+        uniform float matShininess, spotExp;
+        uniform int lightingMode; // 0:directional, 1:point, 2:spotlight
+
+        void main() {
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
+            //fColor = vColor;
+
+            vec3 N = normalize(mat3(modelMatrix) * vNormal.xyz);
+            vec3 worldPos = (modelMatrix * vPosition).xyz;
+            vec3 V = normalize(eyePos - worldPos);
+
+            if(lightingMode == 0){    // directional light
+                vec3 L = normalize(lightSrc.xyz);
+                float kd = max(dot(L, N), 0.0);
+                vec4 diffuse = kd * diffuseProduct;
+
+                vec3 H = normalize(L + V);
+                float ks = pow(max(dot(N, H), 0.0), matShininess);
+                vec4 specular = ks * specularProduct;
+
+                fColor = ambientProduct + diffuse + specular;
+            }
+            else if(lightingMode == 1){ // point light
+                vec3 lightVec = lightSrc.xyz - worldPos;
+                vec3 L = normalize(lightVec);
+                float kd = max(dot(L, N), 0.0);
+                vec4 diffuse = kd * diffuseProduct;
+
+                vec3 H = normalize(L + V);
+                float ks = pow(max(dot(N, H), 0.0), matShininess);
+                vec4 specular = ks * specularProduct;
+
+                float d = length(lightVec);
+                float atten = 1.0 / (kAtten[0] + kAtten[1]*d + kAtten[2]*d*d);
+                fColor = ambientProduct + atten * (diffuse + specular);
+            }
+            else {  // spotlight
+                vec3 lightVec = lightSrc.xyz - worldPos;
+                vec3 L = normalize(lightVec);
+                float kd = max(dot(L, N), 0.0);
+                vec4 diffuse = kd * diffuseProduct;
+
+                vec3 H = normalize(L + V);
+                float ks = pow(max(dot(N, H), 0.0), matShininess);
+                vec4 specular = ks * specularProduct;
+
+                float d = length(lightVec);
+                float atten = 1.0 / (kAtten[0] + kAtten[1]*d + kAtten[2]*d*d);
+
+                float spotDot = max(dot(normalize(spotDir), -L), 0.0);
+                if(spotDot > 0.0)
+                    atten *= pow(spotDot, spotExp);
+                else
+                    atten = 0.0;
+
+                fColor = ambientProduct + atten * (diffuse + specular);
+            }
+
+            fColor.a = 1.0;
+        }
+        </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+
+        void main() {
+            gl_FragColor = fColor;
+        }
+        </script>
+
+    <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../Common/initShaders.js"></script>
+    <script type="text/javascript" src="../Common/MV.js"></script>
+    <script type="text/javascript" src="../trackball.js"></script>
+    <script type="text/javascript" src="scene.js"></script>
+</head>
+
+<body>
+    <div style="width: 800px; text-align: center;">
+        <input type="radio" id="directional" name="lighting" checked> Directional Light
+        <input type="radio" id="point" name="lighting"> Point Light
+        <input type="radio" id="spotlight" name="lighting"> Spotlight
+        <button id="change">Change</button>
+    </div>
+    <canvas id="gl-canvas" width="800" height="512">
+        Oops... your browser doesn't support the HTML5 canvas element!
+    </canvas>
+</body>
+
+</html>
+

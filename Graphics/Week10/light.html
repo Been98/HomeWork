@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>20175260 최영빈 - Lighting</title>
+        <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vNormal;
+        attribute vec4 vColor;
+        
+        uniform mat4 modelMatrix,viewMatrix;
+        uniform mat4 projectionMatrix;
+        varying vec4 fColor;
+
+        uniform vec3 eyePos;
+        uniform vec4 lightDir, lightAmbient, lightDiffuse,lightSpecular;
+        uniform vec4 matAmbient, matDiffuse, matSpecular;
+        uniform float matShininess;
+
+        void main() {
+            gl_Position = projectionMatrix *  viewMatrix * modelMatrix  * vPosition;
+            //fColor = vec4(vNormal.xyz,1.0);
+
+            vec4 ambient = lightAmbient * matAmbient;
+
+            vec3 N = normalize(mat3(modelMatrix) * vNormal.xyz);
+            vec3 L = normalize(lightDir.xyz);
+            float kd = max(dot(L, N), 0.0);
+            vec4 diffuse = kd * lightDiffuse * matDiffuse;
+
+            vec3 worldPos = (modelMatrix * vPosition).xyz;
+            vec3 V = normalize(eyePos - worldPos);
+            vec3 H = normalize(L + V);
+            float ks = pow(max(dot(N, H), 0.0), matShininess);
+            vec4 specular = ks * lightSpecular * matSpecular;
+
+            fColor = ambient + diffuse + specular;
+            fColor.a = 1.0;
+            
+        }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+
+        void main() {
+            gl_FragColor = fColor;
+        }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="../trackball.js"></script>
+        <script type="text/javascript" src="light.js"></script>
+    </head>
+    <body>
+        <div style="width: 512px; text-align: center;">
+            <button id="xButton">Rotate X</button>
+            <button id="yButton">Rotate Y</button>
+            <button id="zButton">Rotate Z</button>
+            <button id="buttonT">Toggle Rotate</button>
+        </div>
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+    </body>
+</html>

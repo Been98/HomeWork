@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>학번 이름 - Wireframe</title>
+        <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        uniform mat4 modelMatrix, viewMatrix, projectionMatrix;
+        
+        void main() {
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
+        }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        
+        void main() {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="../trackball.js"></script>
+        <script type="text/javascript" src="wireframe.js"></script>
+    </head>
+    <body>
+        <div style="width: 512px; text-align: center;">
+            Subdivision Level: 1 <input type="range" id="level" value="1" min="1" max="5" step="1"> 5
+        </div>
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+    </body>
+</html>

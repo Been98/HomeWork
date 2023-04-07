@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>20175260 최영빈 - Cube Mapping</title>
+        <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vNormal;
+        uniform mat4 modelMatrix, viewMatrix, projectionMatrix;
+        varying vec3 fNormal, fWorldPos; 
+
+        
+        void main() {
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vPosition;
+        
+            //fNormal = normalize(mat3(modelMatrix) * vNormal.xyz);
+            //fWorldPos = (modelMatrix * vPosition).xyz;
+            fNormal = vNormal.xyz;
+            fWorldPos = vPosition.xyz;
+        }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        
+        uniform samplerCube texture;
+
+        varying vec3 fNormal, fWorldPos;
+
+        void main() {
+            vec3 N = normalize(fNormal);
+            vec3 V = normalize(-fWorldPos);
+            vec3 R = reflect(V, N);
+            gl_FragColor = textureCube(texture, R);
+        }
+        </script>
+
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="../trackball.js"></script>
+        <script type="text/javascript" src="envCube.js"></script>
+    </head>
+    <body>
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+        <table>
+            <tr align = "center">
+                <td>&nbsp;</td><td>X</td><td>Y</td><td>Z</td>
+            </tr>
+            <tr><td>Positive</td>
+                <td><img id= "xPos" src="../images/LobbyXPos.bmp" width="150"></td>
+                <td><img id= "yPos" src="../images/LobbyYPos.bmp" width="150"></td>    
+                <td><img id= "zPos" src="../images/LobbyZPos.bmp" width="150"></td>
+            </tr>
+            <tr>
+                <td>Negative</td>
+                <td><img id="xNeg" src="../images/LobbyXNeg.bmp" width="150"></td>
+                <td><img id="yNeg" src="../images/LobbyYNeg.bmp" width="150"></td>
+                <td><img id="zNeg" src="../images/LobbyZNeg.bmp" width="150"></td>
+            </tr>
+        </table>
+    </body>
+</html>

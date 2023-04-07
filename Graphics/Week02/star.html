@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>20175260 최영빈</title>
+    
+        <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition; 
+
+        void main() { // vertex-shader에서는 Position을 지정해야함 
+            gl_PointSize = 5.0;
+            gl_Position = vPosition;
+        }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float; 
+
+        void main() { 
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+        </script>
+    
+        <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+        <script type="text/javascript" src="../Common/initShaders.js"></script>
+        <script type="text/javascript" src="../Common/MV.js"></script>
+        <script type="text/javascript" src="star.js"></script>
+    </head>
+    <body>
+        <canvas id="gl-canvas" width="500" height="500">
+            Oops... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+        <canvas id="gl-canvas2" width="500" height="500">
+            Oops... your browser doesn't support the HTML5 canvas element!
+        </canvas>
+    </body>
+</html>
